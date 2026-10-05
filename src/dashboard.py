@@ -26,7 +26,7 @@ from src.depot_siting import naive_baseline_depots, greedy_pmedian_depots, deman
 
 st.set_page_config(page_title="ADV Last-Mile Delivery — Demand & Depot Siting", layout="wide")
 st.title("Autonomous Last-Mile Delivery: Demand Prediction & Depot Siting")
-st.caption("Birmingham case study — currently running on synthetic data (see README)")
+st.caption("Birmingham case study — running on official ONS Census & IMD 2025 data (659 LSOAs)")
 
 k = st.sidebar.slider("Number of depots", min_value=2, max_value=10, value=5)
 

@@ -32,7 +32,7 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def load_lsoa_data(synthetic: bool = True, n: int = 150, seed: int = 42) -> pd.DataFrame:
+def load_lsoa_data(synthetic: bool = False, n: int = 150, seed: int = 42) -> pd.DataFrame:
     """Return a cleaned LSOA-level DataFrame with REQUIRED_COLUMNS.
 
     Parameters
@@ -88,18 +88,31 @@ def _load_real_lsoa_data() -> pd.DataFrame:
     pop = pd.read_csv(pop_path)
     imd = pd.read_csv(imd_path)
 
-    # NOTE: real ONS/IMD CSVs vary in exact column naming by release year —
-    # adjust these merge keys and renames once you've actually downloaded
-    # the files and inspected their headers.
-    df = pop.merge(imd, on="lsoa_code", how="inner")
-    df = df.rename(columns={
+    # Standardize IMD columns
+    imd_col_map = {
+        "LSOA code (2021)": "lsoa_code",
+        "LSOA code (2011)": "lsoa_code",
+        "Index of Multiple Deprivation (IMD) Score": "imd_score",
+        "IMD Score": "imd_score",
+        "IMD_Score": "imd_score",
+        "Employment Score (rate)": "employment_deprivation_rate",
+        "Employment Rate": "employment_rate",
+        "Employment_Rate": "employment_rate",
+    }
+    imd = imd.rename(columns={c: imd_col_map[c] for c in imd.columns if c in imd_col_map})
+    if "employment_rate" not in imd.columns and "employment_deprivation_rate" in imd.columns:
+        imd["employment_rate"] = (1.0 - imd["employment_deprivation_rate"]).round(3)
+
+    # Standardize population columns
+    pop_col_map = {
         "LSOA_name": "lsoa_name",
         "lat": "latitude",
         "lon": "longitude",
         "all_ages": "population",
-        "IMD_Score": "imd_score",
-        "Employment_Rate": "employment_rate",
-    })
+    }
+    pop = pop.rename(columns={c: pop_col_map[c] for c in pop.columns if c in pop_col_map})
+
+    df = pop.merge(imd, on="lsoa_code", how="inner")
     return _validate(df)
 
 
@@ -118,6 +131,6 @@ def _validate(df: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    data = load_lsoa_data(synthetic=True)
+    data = load_lsoa_data(synthetic=False)
     print(data.head())
     print(f"\n{len(data)} LSOAs loaded. Columns: {list(data.columns)}")

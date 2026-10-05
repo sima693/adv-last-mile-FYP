@@ -57,7 +57,7 @@ def _synthetic_demand_proxy(df: pd.DataFrame, seed: int = 7) -> pd.Series:
 def train_and_evaluate(df: pd.DataFrame | None = None, seed: int = 7) -> dict:
     """Trains the baseline and the regression model, returns metrics + predictions."""
     if df is None:
-        df = load_lsoa_data(synthetic=True)
+        df = load_lsoa_data(synthetic=False)
 
     df = df.copy()
     df["demand"] = _synthetic_demand_proxy(df, seed=seed)
