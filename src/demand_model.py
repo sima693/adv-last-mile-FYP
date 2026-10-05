@@ -17,6 +17,12 @@ target in `train_and_evaluate` for that instead.
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+# Add project root to sys.path so 'src' can be imported when running script directly
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression

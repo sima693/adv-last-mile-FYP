@@ -11,6 +11,12 @@ this is meant to demonstrate the pipeline's output clearly in a viva, not
 to be a polished product in its own right.
 """
 
+import sys
+from pathlib import Path
+
+# Add project root to sys.path so 'src' can be resolved when running via Streamlit
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 import pydeck as pdk
 import pandas as pd

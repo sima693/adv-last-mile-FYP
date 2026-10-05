@@ -84,6 +84,10 @@ def demand_weighted_avg_distance(df: pd.DataFrame, depot_indices: list[int], dem
 
 
 if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
     from src.demand_model import train_and_evaluate, predict_demand_all
 
     results = train_and_evaluate()
